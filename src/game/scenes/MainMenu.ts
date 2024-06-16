@@ -3,7 +3,7 @@ import {GameObjects, Scene} from 'phaser';
 import {EventBus} from '../EventBus';
 
 export class MainMenu extends Scene {
-    background: GameObjects.Image;
+    background: GameObjects.GameObject;
     logo: GameObjects.Image;
     title: GameObjects.Text;
     logoTween: Phaser.Tweens.Tween | null;
@@ -13,17 +13,22 @@ export class MainMenu extends Scene {
     }
 
     create() {
-        this.background = this.add.image(512, 384, 'background');
+        const {width, height} = this.cameras.default;
+        this.background = this.add.rectangle(
+            width / 2,
+            height / 2,
+            width,
+            height,
+            0x261447
+        );
 
-        this.logo = this.add.image(512, 300, 'logo').setDepth(100);
+        this.logo = this.add.image(512, 100, 'logo').setDepth(100);
 
         this.title = this.add
-            .text(512, 460, 'Main Menu', {
-                fontFamily: 'Arial Black',
+            .text(512, 300, 'Untitled Deckbuilding Roguelike Word Game', {
+                fontFamily: 'Calibri',
                 fontSize: 38,
-                color: '#ffffff',
-                stroke: '#000000',
-                strokeThickness: 8,
+                color: '#F1FFFA',
                 align: 'center',
             })
             .setOrigin(0.5)
