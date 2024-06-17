@@ -7,8 +7,11 @@ export class Game extends Scene {
     background: Phaser.GameObjects.Image;
     gameText: Phaser.GameObjects.Text;
     tileBag: TileBag;
-    currentHand: Tile[] = [];
-    currentHandv2: Phaser.GameObjects.Container;
+    handTiles: Tile[] = [];
+    handContainer: Phaser.GameObjects.Container;
+    remainingContainer: Phaser.GameObjects.Container;
+    wordsLeft = 4;
+    discardsLeft = 4;
 
     constructor() {
         super('Game');
@@ -57,16 +60,17 @@ export class Game extends Scene {
     renderButtons() {
         const {width, height} = this.cameras.default;
         const shuffleButton = this.add.text(
-            width / 2,
-            height * 0.7,
+            0,
+            150,
             'Shuffle',
             {
                 color: 'white',
             }
         );
+        this.handContainer.add(shuffleButton);
         shuffleButton.setInteractive();
         shuffleButton.on('pointerdown', () => {
-            shuffle(this.currentHand);
+            shuffle(this.handTiles);
             this.renderHand();
         });
         shuffleButton.on('pointerover', () => {
@@ -77,13 +81,25 @@ export class Game extends Scene {
         });
     }
 
+    renderRemainingContainer() {
+        this.remainingContainer = this.add.container(20, 500);
+        const tilesLeft = this.add.text(0, 0, `Tiles left: ${this.tileBag.getNumRemainingTiles()}`);
+
+        const attemptsLeft = this.add.text(0, 30, `Attempts left: ${this.wordsLeft}`)
+        
+        const discardsLeft = this.add.text(0, 60, `Attempts left: ${this.discardsLeft}`);
+
+        this.remainingContainer.add([tilesLeft, attemptsLeft, discardsLeft])
+
+    }
+
     renderHand() {
         const {width, height} = this.cameras.default;
-        this.currentHandv2 = this.add.container(width / 2, height / 2);
-        this.currentHand.forEach((t, idx) => {
+        this.handContainer = this.add.container(width / 2, height / 2);
+        this.handTiles.forEach((t, idx) => {
             const rendered = this.renderTile(t);
             rendered.x = (idx - 3) * 100;
-            this.currentHandv2.add(rendered);
+            this.handContainer.add(rendered);
         });
     }
 
@@ -94,9 +110,10 @@ export class Game extends Scene {
 
         // scrabble stuff
         this.tileBag = new TileBag();
-        this.currentHand = this.tileBag.popNRandomTiles(7);
+        this.handTiles = this.tileBag.popNRandomTiles(7);
         this.renderHand();
         this.renderButtons();
+        this.renderRemainingContainer();
 
         EventBus.emit('current-scene-ready', this);
     }

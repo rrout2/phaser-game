@@ -67,6 +67,10 @@ export class TileBag {
         });
     }
 
+    getNumRemainingTiles() {
+        return this.keyList.length;
+    }
+
     constructor() {
         const scrabbleTiles: Tile[] = [
             new Tile('A', 'A', 1),
