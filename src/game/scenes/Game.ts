@@ -18,7 +18,7 @@ export class Game extends Scene {
     }
 
     renderTile(tile: Tile): Phaser.GameObjects.Container {
-        const rendering = this.add.container();
+        const tileContainer = this.add.container();
 
         const fontSize = 60;
         const bg = this.add.rectangle(
@@ -28,14 +28,14 @@ export class Game extends Scene {
             fontSize * 0.9,
             0xccfccb
         );
-        rendering.add(bg);
-        rendering.add(
+        tileContainer.add(bg);
+        tileContainer.add(
             this.add.text(0, 0, tile.key === ' ' ? ' ' : tile.displayName, {
                 fontSize: fontSize,
                 color: '#261447',
             })
         );
-        rendering.add(
+        tileContainer.add(
             this.add.text(
                 fontSize * 0.6,
                 fontSize * 0.7,
@@ -46,7 +46,7 @@ export class Game extends Scene {
                 }
             )
         );
-        rendering.setSize(fontSize, fontSize);
+        tileContainer.setSize(fontSize, fontSize);
         bg.setInteractive();
         bg.on('pointerover', () => {
             bg.fillColor = 0x96e6b3;
@@ -54,7 +54,7 @@ export class Game extends Scene {
         bg.on('pointerout', () => {
             bg.fillColor = 0xccfccb;
         });
-        return rendering;
+        return tileContainer;
     }
 
     renderButtons() {
@@ -67,7 +67,6 @@ export class Game extends Scene {
                 color: 'white',
             }
         );
-        this.handContainer.add(shuffleButton);
         shuffleButton.setInteractive();
         shuffleButton.on('pointerdown', () => {
             shuffle(this.handTiles);
@@ -86,20 +85,22 @@ export class Game extends Scene {
         const tilesLeft = this.add.text(0, 0, `Tiles left: ${this.tileBag.getNumRemainingTiles()}`);
 
         const attemptsLeft = this.add.text(0, 30, `Attempts left: ${this.wordsLeft}`)
-        
-        const discardsLeft = this.add.text(0, 60, `Attempts left: ${this.discardsLeft}`);
+
+        const discardsLeft = this.add.text(0, 60, `Discards left: ${this.discardsLeft}`);
 
         this.remainingContainer.add([tilesLeft, attemptsLeft, discardsLeft])
-
     }
 
     renderHand() {
         const {width, height} = this.cameras.default;
+
         this.handContainer = this.add.container(width / 2, height / 2);
+        this.handContainer.removeAll(true);
+
         this.handTiles.forEach((t, idx) => {
             const rendered = this.renderTile(t);
             rendered.x = (idx - 3) * 100;
-            this.handContainer.add(rendered);
+            this.handContainer!.add(rendered);
         });
     }
 
